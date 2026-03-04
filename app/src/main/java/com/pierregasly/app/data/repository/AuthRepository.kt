@@ -18,7 +18,7 @@ class AuthRepository {
 
     private fun configErrorOrNull(): Result.Error? {
         return if (!SupabaseClient.isConfigured) {
-            Result.Error("Supabase is not configured. Set SUPABASE_URL and SUPABASE_ANON_KEY in gradle.properties.")
+            Result.Error("Supabase is not configured. Add valid SUPABASE_URL and SUPABASE_ANON_KEY in gradle.properties, then Sync/Rebuild.")
         } else null
     }
 

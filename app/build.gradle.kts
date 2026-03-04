@@ -4,9 +4,10 @@ plugins {
 }
 
 fun Project.resolveSecret(name: String, fallback: String): String {
-    val fromGradleProp = findProperty(name) as String?
-    val fromEnv = System.getenv(name)
-    return (fromGradleProp ?: fromEnv)?.takeIf { it.isNotBlank() } ?: fallback
+    val fromGradleProp = providers.gradleProperty(name).orNull
+    val fromRootProp = rootProject.providers.gradleProperty(name).orNull
+    val fromEnv = providers.environmentVariable(name).orNull
+    return (fromGradleProp ?: fromRootProp ?: fromEnv)?.trim()?.takeIf { it.isNotBlank() } ?: fallback
 }
 
 android {
@@ -22,6 +23,10 @@ android {
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
 
         // Supabase (set via gradle.properties or environment variables)
+        val supabaseUrl = project.resolveSecret("SUPABASE_URL", "https://YOUR_PROJECT_ID.supabase.co")
+        val supabaseAnonKey = project.resolveSecret("SUPABASE_ANON_KEY", "YOUR_SUPABASE_ANON_KEY")
+
+        buildConfigField("String", "SUPABASE_URL", "\"${supabaseUrl.trimEnd('/')}\"")
         // NOTE: Do NOT put your service/secret key in the Android app.
         val supabaseUrl = project.resolveSecret("SUPABASE_URL", "https://YOUR_PROJECT_ID.supabase.co")
         val supabaseAnonKey = project.resolveSecret("SUPABASE_ANON_KEY", "YOUR_SUPABASE_ANON_KEY")
@@ -55,7 +60,6 @@ android {
     }
 
     buildFeatures {
-        // XML (View system) UI (Phase 1)
         viewBinding = true
         buildConfig = true
     }
@@ -75,7 +79,6 @@ dependencies {
     implementation("androidx.appcompat:appcompat:1.7.0")
     implementation("androidx.activity:activity-ktx:1.9.3")
     implementation("androidx.constraintlayout:constraintlayout:2.2.0")
-    // Still used by the app theme (themes.xml) + SplashScreen parent theme
     implementation("com.google.android.material:material:1.12.0")
 
     implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.8.7")

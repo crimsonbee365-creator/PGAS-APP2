@@ -22,10 +22,13 @@ object SupabaseClient {
     }
 
     val isConfigured: Boolean
-        get() = BuildConfig.SUPABASE_URL.isNotBlank() &&
-            BuildConfig.SUPABASE_ANON_KEY.isNotBlank() &&
-            !BuildConfig.SUPABASE_URL.contains("YOUR_PROJECT_ID") &&
-            !BuildConfig.SUPABASE_ANON_KEY.contains("YOUR_SUPABASE_ANON_KEY")
+        get() {
+            val url = BuildConfig.SUPABASE_URL.trim()
+            val anon = BuildConfig.SUPABASE_ANON_KEY.trim()
+            val urlLooksValid = url.startsWith("https://") && ".supabase.co" in url
+            val anonLooksValid = anon.count { it == '.' } == 2 && anon.length > 80
+            return urlLooksValid && anonLooksValid
+        }
 
     private val apikeyInterceptor = Interceptor { chain ->
         val req = chain.request().newBuilder()
