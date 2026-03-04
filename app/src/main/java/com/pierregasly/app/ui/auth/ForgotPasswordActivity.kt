@@ -4,6 +4,7 @@ import android.content.Intent
 import android.os.Bundle
 import android.view.View
 import android.widget.ProgressBar
+import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
@@ -27,6 +28,7 @@ class ForgotPasswordActivity : AppCompatActivity() {
 
         val tilEmail = findViewById<TextInputLayout>(R.id.tilEmail)
         val etEmail = findViewById<TextInputEditText>(R.id.etEmail)
+        val tvError = findViewById<TextView>(R.id.tvError)
         val progress = findViewById<ProgressBar>(R.id.progress)
         val btnSend = findViewById<View>(R.id.btnSendOtp)
 
@@ -40,9 +42,12 @@ class ForgotPasswordActivity : AppCompatActivity() {
 
         btnSend.setOnClickListener {
             tilEmail.error = null
+            tvError.visibility = View.GONE
+
             val email = etEmail.text?.toString()?.trim().orEmpty()
-            if (email.isBlank() || !android.util.Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
-                tilEmail.error = "Enter a valid email"
+            val gmailRegex = Regex("^[A-Za-z0-9][A-Za-z0-9._%+-]{2,}@gmail\\.com$")
+            if (email.isBlank() || !gmailRegex.matches(email)) {
+                tilEmail.error = "Use a valid Gmail address (example@gmail.com)"
                 return@setOnClickListener
             }
 
@@ -50,16 +55,19 @@ class ForgotPasswordActivity : AppCompatActivity() {
                 setLoading(true)
                 when (val res = repo.requestRecoveryOtp(email)) {
                     is Result.Success -> {
-                        Toast.makeText(this@ForgotPasswordActivity, "OTP sent to email", Toast.LENGTH_SHORT).show()
+                        Toast.makeText(this@ForgotPasswordActivity, "OTP sent to your email", Toast.LENGTH_SHORT).show()
                         val i = Intent(this@ForgotPasswordActivity, OtpVerifyActivity::class.java)
                         i.putExtra(OtpVerifyActivity.EXTRA_MODE, OtpVerifyActivity.MODE_RECOVERY)
                         i.putExtra(OtpVerifyActivity.EXTRA_EMAIL, email)
                         startActivity(i)
                         finish()
                     }
+
                     is Result.Error -> {
-                        Toast.makeText(this@ForgotPasswordActivity, res.message, Toast.LENGTH_LONG).show()
+                        tvError.text = res.message
+                        tvError.visibility = View.VISIBLE
                     }
+
                     Result.Loading -> Unit
                 }
                 setLoading(false)

@@ -21,9 +21,19 @@ object SupabaseClient {
         level = HttpLoggingInterceptor.Level.BODY
     }
 
+    val isConfigured: Boolean
+        get() {
+            val url = BuildConfig.SUPABASE_URL.trim()
+            val anon = BuildConfig.SUPABASE_ANON_KEY.trim()
+            val urlLooksValid = url.startsWith("https://") && ".supabase.co" in url
+            val anonLooksValid = anon.count { it == '.' } == 2 && anon.length > 80
+            return urlLooksValid && anonLooksValid
+        }
+
     private val apikeyInterceptor = Interceptor { chain ->
         val req = chain.request().newBuilder()
             .addHeader("apikey", BuildConfig.SUPABASE_ANON_KEY)
+            .addHeader("Authorization", "Bearer ${BuildConfig.SUPABASE_ANON_KEY}")
             .addHeader("Content-Type", "application/json")
             .build()
         chain.proceed(req)
