@@ -1,0 +1,202 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.coordinatorlayout.widget.CoordinatorLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="?android:colorBackground">
+
+    <androidx.core.widget.NestedScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:fillViewport="true">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:minHeight="750dp">
+
+            <!-- HERO TOP -->
+            <FrameLayout android:layout_width="match_parent" android:layout_height="260dp">
+                <View android:layout_width="match_parent" android:layout_height="match_parent"
+                    android:background="@drawable/bg_hero_gradient"/>
+                <View android:layout_width="200dp" android:layout_height="200dp"
+                    android:layout_gravity="top|end" android:layout_marginTop="-60dp"
+                    android:layout_marginEnd="-60dp" android:background="#22FFFFFF"/>
+                <View android:layout_width="120dp" android:layout_height="120dp"
+                    android:layout_gravity="bottom|start" android:layout_marginBottom="-30dp"
+                    android:layout_marginStart="-20dp" android:background="#22FFFFFF"/>
+                <LinearLayout android:layout_width="match_parent" android:layout_height="match_parent"
+                    android:orientation="vertical" android:gravity="center" android:paddingTop="40dp">
+                    <ImageView android:id="@+id/ivLogo" android:layout_width="76dp"
+                        android:layout_height="76dp" android:src="@drawable/logo_no_text"
+                        android:layout_marginBottom="14dp"/>
+                    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
+                        android:text="Pierre Gasly" android:textColor="#FFFFFF"
+                        android:textSize="26sp" android:textStyle="bold"/>
+                    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
+                        android:text="GAS DELIVERY" android:textColor="#CCE0FF"
+                        android:textSize="11sp" android:letterSpacing="0.15"/>
+                </LinearLayout>
+                <ImageButton android:id="@+id/btnMenu" android:layout_width="44dp"
+                    android:layout_height="44dp" android:layout_gravity="top|end"
+                    android:layout_marginTop="44dp" android:layout_marginEnd="16dp"
+                    android:background="#22FFFFFF" android:src="@drawable/ic_hamburger_dark"
+                    android:padding="10dp" android:contentDescription="Menu"/>
+            </FrameLayout>
+
+            <!-- FORM -->
+            <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
+                android:orientation="vertical" android:padding="28dp"
+                android:background="?android:colorBackground">
+
+                <TextView android:id="@+id/tvWelcome" android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" android:text="Welcome back! 👋"
+                    android:textSize="24sp" android:textStyle="bold"
+                    android:textColor="?android:textColorPrimary" android:layout_marginBottom="4dp"/>
+
+                <TextView android:id="@+id/tvSubtitle" android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" android:text="Sign in to continue ordering"
+                    android:textSize="13sp" android:textColor="?android:textColorSecondary"
+                    android:layout_marginBottom="28dp"/>
+
+                <com.google.android.material.textfield.TextInputLayout
+                    android:id="@+id/tilEmail" style="@style/PG.InputLayout"
+                    android:layout_width="match_parent" android:layout_height="wrap_content"
+                    android:hint="Email address"
+                    app:startIconDrawable="@android:drawable/ic_dialog_email"
+                    app:startIconTint="@color/pg_primary" android:layout_marginBottom="14dp">
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/etEmail" android:layout_width="match_parent"
+                        android:layout_height="56dp" android:inputType="textEmailAddress"
+                        android:imeOptions="actionNext" android:singleLine="true"/>
+                </com.google.android.material.textfield.TextInputLayout>
+
+                <com.google.android.material.textfield.TextInputLayout
+                    android:id="@+id/tilPassword" style="@style/PG.InputLayout"
+                    android:layout_width="match_parent" android:layout_height="wrap_content"
+                    android:hint="Password"
+                    app:startIconDrawable="@android:drawable/ic_lock_idle_lock"
+                    app:startIconTint="@color/pg_primary"
+                    app:endIconMode="password_toggle"
+                    app:errorIconDrawable="@null">
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/etPassword" android:layout_width="match_parent"
+                        android:layout_height="56dp" android:inputType="textPassword"
+                        android:imeOptions="actionDone" android:singleLine="true"/>
+                </com.google.android.material.textfield.TextInputLayout>
+
+                <TextView android:id="@+id/tvForgotPassword" android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" android:text="Forgot password?"
+                    android:textColor="@color/pg_primary" android:textSize="13sp"
+                    android:textStyle="bold" android:clickable="true" android:focusable="true"
+                    android:layout_gravity="end" android:layout_marginTop="10dp" android:layout_marginBottom="6dp"/>
+
+                <TextView android:id="@+id/tvError" android:layout_width="match_parent"
+                    android:layout_height="wrap_content" android:textColor="@color/error"
+                    android:textSize="13sp" android:gravity="center"
+                    android:background="@color/error_soft" android:padding="12dp"
+                    android:visibility="gone" android:layout_marginBottom="4dp"/>
+
+                <Button android:id="@+id/btnLogin" android:layout_width="match_parent"
+                    android:layout_height="56dp" android:text="Sign In"
+                    android:textColor="@color/white" android:textSize="16sp"
+                    android:textStyle="bold" android:letterSpacing="0.04"
+                    android:background="@drawable/bg_button_gradient"
+                    android:stateListAnimator="@null" android:layout_marginTop="16dp"/>
+
+                <!-- Custom loading indicator shown inside button area -->
+                <FrameLayout android:layout_width="match_parent" android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp" android:gravity="center">
+                    <ProgressBar android:id="@+id/loginProgress"
+                        android:layout_width="44dp" android:layout_height="44dp"
+                        android:layout_gravity="center"
+                        android:indeterminateDrawable="@drawable/anim_loading_ring"
+                        android:visibility="gone"/>
+                </FrameLayout>
+
+                <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
+                    android:orientation="horizontal" android:gravity="center_vertical"
+                    android:layout_marginTop="24dp" android:layout_marginBottom="16dp">
+                    <View android:layout_width="0dp" android:layout_height="1dp"
+                        android:layout_weight="1" android:background="@color/divider_light"/>
+                    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
+                        android:text="  or  " android:textColor="?android:textColorSecondary" android:textSize="12sp"/>
+                    <View android:layout_width="0dp" android:layout_height="1dp"
+                        android:layout_weight="1" android:background="@color/divider_light"/>
+                </LinearLayout>
+
+                <LinearLayout android:layout_width="wrap_content" android:layout_height="wrap_content"
+                    android:orientation="horizontal" android:gravity="center"
+                    android:layout_gravity="center">
+                    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
+                        android:text="Don't have an account?  " android:textSize="14sp"
+                        android:textColor="?android:textColorSecondary"/>
+                    <TextView android:id="@+id/tvSignUp" android:layout_width="wrap_content"
+                        android:layout_height="wrap_content" android:text="Sign Up"
+                        android:textColor="@color/pg_primary" android:textSize="14sp"
+                        android:textStyle="bold" android:clickable="true" android:focusable="true"/>
+                </LinearLayout>
+            </LinearLayout>
+        </LinearLayout>
+    </androidx.core.widget.NestedScrollView>
+
+    <View android:id="@+id/drawerOverlay" android:layout_width="match_parent"
+        android:layout_height="match_parent" android:background="@color/overlay_dark"
+        android:visibility="gone" android:clickable="true" android:focusable="true"/>
+
+    <LinearLayout android:id="@+id/menuDrawer" android:layout_width="270dp"
+        android:layout_height="match_parent" android:layout_gravity="end"
+        android:orientation="vertical" android:background="?attr/colorNavBackground"
+        android:paddingTop="56dp" android:paddingLeft="20dp" android:paddingRight="20dp"
+        android:elevation="24dp" android:visibility="gone">
+        <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
+            android:gravity="end" android:layout_marginBottom="24dp">
+            <ImageButton android:id="@+id/btnCloseMenu" android:layout_width="36dp"
+                android:layout_height="36dp" android:background="?attr/colorSurface2"
+                android:src="@android:drawable/ic_menu_close_clear_cancel"
+                android:padding="8dp" android:contentDescription="Close"/>
+        </LinearLayout>
+        <LinearLayout android:layout_width="match_parent" android:layout_height="52dp"
+            android:orientation="horizontal" android:gravity="center_vertical">
+            <TextView android:layout_width="0dp" android:layout_height="wrap_content"
+                android:layout_weight="1" android:text="🌙  Dark Mode"
+                android:textColor="?android:textColorPrimary" android:textSize="15sp"/>
+            <com.google.android.material.switchmaterial.SwitchMaterial android:id="@+id/switchTheme"
+                android:layout_width="wrap_content" android:layout_height="wrap_content"
+                app:thumbTint="@color/pg_primary"/>
+        </LinearLayout>
+        <View android:layout_width="match_parent" android:layout_height="1dp"
+            android:background="@color/divider_light" android:layout_marginTop="10dp" android:layout_marginBottom="10dp"/>
+        <LinearLayout android:id="@+id/menuAbout" android:layout_width="match_parent"
+            android:layout_height="52dp" android:orientation="horizontal"
+            android:gravity="center_vertical" android:clickable="true" android:focusable="true">
+            <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
+                android:text="ℹ️" android:textSize="18sp" android:layout_marginEnd="14dp"/>
+            <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
+                android:text="About Us" android:textColor="?android:textColorPrimary" android:textSize="15sp"/>
+        </LinearLayout>
+        <LinearLayout android:id="@+id/menuContact" android:layout_width="match_parent"
+            android:layout_height="52dp" android:orientation="horizontal"
+            android:gravity="center_vertical" android:clickable="true" android:focusable="true">
+            <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
+                android:text="📞" android:textSize="18sp" android:layout_marginEnd="14dp"/>
+            <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
+                android:text="Contact Us" android:textColor="?android:textColorPrimary" android:textSize="15sp"/>
+        </LinearLayout>
+        <View android:id="@+id/menuLogoutDivider" android:layout_width="match_parent"
+            android:layout_height="1dp" android:background="@color/divider_light"
+            android:layout_marginTop="10dp" android:layout_marginBottom="10dp" android:visibility="gone"/>
+        <LinearLayout android:id="@+id/menuLogout" android:layout_width="match_parent"
+            android:layout_height="52dp" android:orientation="horizontal"
+            android:gravity="center_vertical" android:clickable="true" android:focusable="true"
+            android:visibility="gone">
+            <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
+                android:text="🚪" android:textSize="18sp" android:layout_marginEnd="14dp"/>
+            <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
+                android:text="Log Out" android:textColor="@color/error"
+                android:textSize="15sp" android:textStyle="bold"/>
+        </LinearLayout>
+    </LinearLayout>
+</androidx.coordinatorlayout.widget.CoordinatorLayout>

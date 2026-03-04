@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <style name="Theme.PierreGasly" parent="Theme.MaterialComponents.DayNight.NoActionBar">
+        <item name="colorPrimary">@color/pg_primary</item>
+        <item name="colorPrimaryDark">@color/pg_primary_dark</item>
+        <item name="colorAccent">@color/pg_secondary</item>
+        <item name="android:colorBackground">@color/background_dark</item>
+        <item name="android:windowBackground">@color/background_dark</item>
+        <item name="android:textColorPrimary">@color/text_primary_dark</item>
+        <item name="android:textColorSecondary">@color/text_secondary_dark</item>
+        <item name="android:statusBarColor">@color/background_dark</item>
+        <item name="android:windowLightStatusBar">false</item>
+        <item name="colorSurface2">@color/surface_dark</item>
+        <item name="colorNavBackground">@color/nav_dark</item>
+        <item name="colorCardBackground">@color/surface_dark</item>
+    </style>
+
+    <style name="Theme.PierreGasly.Splash" parent="Theme.SplashScreen">
+        <item name="windowSplashScreenBackground">@color/background_dark</item>
+        <item name="windowSplashScreenAnimatedIcon">@drawable/ic_launcher_foreground</item>
+        <item name="windowSplashScreenIconBackgroundColor">@color/pg_primary</item>
+        <item name="postSplashScreenTheme">@style/Theme.PierreGasly</item>
+    </style>
+
+</resources>

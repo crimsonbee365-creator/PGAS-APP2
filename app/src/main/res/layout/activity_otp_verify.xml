@@ -1,0 +1,293 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="?android:colorBackground"
+    android:padding="24dp">
+
+    <!-- Back Button -->
+    <ImageButton
+        android:id="@+id/btnBack"
+        android:layout_width="44dp"
+        android:layout_height="44dp"
+        android:background="?attr/selectableItemBackgroundBorderless"
+        android:src="@android:drawable/ic_menu_revert"
+        android:contentDescription="Back"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <!-- Logo -->
+    <ImageView
+        android:id="@+id/ivShield"
+        android:layout_width="120dp"
+        android:layout_height="120dp"
+        android:src="@drawable/logo_no_text"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toTopOf="@id/tvTitle"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintVertical_chainStyle="packed"
+        app:layout_constraintVertical_bias="0.35"
+        android:layout_marginBottom="24dp" />
+
+    <TextView
+        android:id="@+id/tvTitle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/verify_phone"
+        android:textSize="26sp"
+        android:textStyle="bold"
+        android:textColor="?android:textColorPrimary"
+        app:layout_constraintTop_toBottomOf="@id/ivShield"
+        app:layout_constraintBottom_toTopOf="@id/tvOtpDescription"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginBottom="8dp" />
+
+    <TextView
+        android:id="@+id/tvOtpDescription"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Enter the 6-digit code sent to"
+        android:textSize="14sp"
+        android:textColor="?android:textColorSecondary"
+        app:layout_constraintTop_toBottomOf="@id/tvTitle"
+        app:layout_constraintBottom_toTopOf="@id/tvPhoneNumber"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginBottom="4dp" />
+
+    <TextView
+        android:id="@+id/tvPhoneNumber"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="your@email.com"
+        android:textSize="16sp"
+        android:textStyle="bold"
+        android:textColor="@color/pg_primary"
+        app:layout_constraintTop_toBottomOf="@id/tvOtpDescription"
+        app:layout_constraintBottom_toTopOf="@id/otpContainer"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginBottom="32dp" />
+
+    <!-- OTP Input — 6 boxes with ALL attributes inline (no style ref) -->
+    <LinearLayout
+        android:id="@+id/otpContainer"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center"
+        android:weightSum="6"
+        app:layout_constraintTop_toBottomOf="@id/tvPhoneNumber"
+        app:layout_constraintBottom_toTopOf="@id/tvError"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginBottom="16dp">
+
+        <EditText
+            android:id="@+id/otp1"
+            android:layout_width="0dp"
+            android:layout_height="56dp"
+            android:layout_weight="1"
+            android:layout_margin="4dp"
+            android:gravity="center"
+            android:textSize="22sp"
+            android:textStyle="bold"
+            android:textColor="?android:textColorPrimary"
+            android:inputType="number"
+            android:maxLength="1"
+            android:background="@drawable/bg_otp_box"
+            android:padding="0dp"
+            android:textAlignment="center" />
+
+        <EditText
+            android:id="@+id/otp2"
+            android:layout_width="0dp"
+            android:layout_height="56dp"
+            android:layout_weight="1"
+            android:layout_margin="4dp"
+            android:gravity="center"
+            android:textSize="22sp"
+            android:textStyle="bold"
+            android:textColor="?android:textColorPrimary"
+            android:inputType="number"
+            android:maxLength="1"
+            android:background="@drawable/bg_otp_box"
+            android:padding="0dp"
+            android:textAlignment="center" />
+
+        <EditText
+            android:id="@+id/otp3"
+            android:layout_width="0dp"
+            android:layout_height="56dp"
+            android:layout_weight="1"
+            android:layout_margin="4dp"
+            android:gravity="center"
+            android:textSize="22sp"
+            android:textStyle="bold"
+            android:textColor="?android:textColorPrimary"
+            android:inputType="number"
+            android:maxLength="1"
+            android:background="@drawable/bg_otp_box"
+            android:padding="0dp"
+            android:textAlignment="center" />
+
+        <EditText
+            android:id="@+id/otp4"
+            android:layout_width="0dp"
+            android:layout_height="56dp"
+            android:layout_weight="1"
+            android:layout_margin="4dp"
+            android:gravity="center"
+            android:textSize="22sp"
+            android:textStyle="bold"
+            android:textColor="?android:textColorPrimary"
+            android:inputType="number"
+            android:maxLength="1"
+            android:background="@drawable/bg_otp_box"
+            android:padding="0dp"
+            android:textAlignment="center" />
+
+        <EditText
+            android:id="@+id/otp5"
+            android:layout_width="0dp"
+            android:layout_height="56dp"
+            android:layout_weight="1"
+            android:layout_margin="4dp"
+            android:gravity="center"
+            android:textSize="22sp"
+            android:textStyle="bold"
+            android:textColor="?android:textColorPrimary"
+            android:inputType="number"
+            android:maxLength="1"
+            android:background="@drawable/bg_otp_box"
+            android:padding="0dp"
+            android:textAlignment="center" />
+
+        <EditText
+            android:id="@+id/otp6"
+            android:layout_width="0dp"
+            android:layout_height="56dp"
+            android:layout_weight="1"
+            android:layout_margin="4dp"
+            android:gravity="center"
+            android:textSize="22sp"
+            android:textStyle="bold"
+            android:textColor="?android:textColorPrimary"
+            android:inputType="number"
+            android:maxLength="1"
+            android:background="@drawable/bg_otp_box"
+            android:padding="0dp"
+            android:textAlignment="center" />
+
+</LinearLayout>
+
+    <!-- Error Message -->
+    <TextView
+        android:id="@+id/tvError"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:text=""
+        android:textColor="@color/error"
+        android:textSize="13sp"
+        android:gravity="center"
+        android:visibility="gone"
+        app:layout_constraintTop_toBottomOf="@id/otpContainer"
+        app:layout_constraintBottom_toTopOf="@id/btnVerify"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginBottom="8dp" />
+
+    <!-- Verify Button -->
+    <Button
+        android:id="@+id/btnVerify"
+        android:layout_width="0dp"
+        android:layout_height="52dp"
+        android:text="@string/verify"
+        android:textColor="@color/white"
+        android:textSize="16sp"
+        android:textStyle="bold"
+        android:background="@drawable/bg_button_gradient"
+        android:stateListAnimator="@null"
+        app:layout_constraintTop_toBottomOf="@id/tvError"
+        app:layout_constraintBottom_toTopOf="@id/otpProgress"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginBottom="8dp" />
+
+    <!-- Progress -->
+    <ProgressBar
+        android:id="@+id/otpProgress"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:indeterminateTint="@color/pg_primary"
+        android:visibility="gone"
+        app:layout_constraintTop_toBottomOf="@id/btnVerify"
+        app:layout_constraintBottom_toTopOf="@id/tvResend"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginBottom="4dp" />
+
+    <!-- Resend OTP -->
+    <TextView
+        android:id="@+id/tvResend"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Resend OTP in 60s"
+        android:textSize="14sp"
+        android:textColor="?android:textColorSecondary"
+        android:gravity="center"
+        android:clickable="true"
+        android:focusable="true"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginBottom="40dp" />
+
+    <!-- Recovery: new password fields (shown only for forgot-password flow) -->
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/tilNewPassword"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="18dp"
+        android:hint="New password"
+        android:visibility="gone"
+        app:endIconMode="password_toggle"
+        app:layout_constraintTop_toBottomOf="@id/tvResend"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginStart="24dp"
+        android:layout_marginEnd="24dp">
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/etNewPassword"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:inputType="textPassword" />
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/tilConfirmNewPassword"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:hint="Confirm new password"
+        android:visibility="gone"
+        app:endIconMode="password_toggle"
+        app:layout_constraintTop_toBottomOf="@id/tilNewPassword"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginStart="24dp"
+        android:layout_marginEnd="24dp">
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/etConfirmNewPassword"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:inputType="textPassword" />
+    </com.google.android.material.textfield.TextInputLayout>
+
+</androidx.constraintlayout.widget.ConstraintLayout>
