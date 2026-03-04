@@ -21,9 +21,16 @@ object SupabaseClient {
         level = HttpLoggingInterceptor.Level.BODY
     }
 
+    val isConfigured: Boolean
+        get() = BuildConfig.SUPABASE_URL.isNotBlank() &&
+            BuildConfig.SUPABASE_ANON_KEY.isNotBlank() &&
+            !BuildConfig.SUPABASE_URL.contains("YOUR_PROJECT_ID") &&
+            !BuildConfig.SUPABASE_ANON_KEY.contains("YOUR_SUPABASE_ANON_KEY")
+
     private val apikeyInterceptor = Interceptor { chain ->
         val req = chain.request().newBuilder()
             .addHeader("apikey", BuildConfig.SUPABASE_ANON_KEY)
+            .addHeader("Authorization", "Bearer ${BuildConfig.SUPABASE_ANON_KEY}")
             .addHeader("Content-Type", "application/json")
             .build()
         chain.proceed(req)

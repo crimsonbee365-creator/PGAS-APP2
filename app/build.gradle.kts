@@ -3,6 +3,12 @@ plugins {
     id("org.jetbrains.kotlin.android")
 }
 
+fun Project.resolveSecret(name: String, fallback: String): String {
+    val fromGradleProp = findProperty(name) as String?
+    val fromEnv = System.getenv(name)
+    return (fromGradleProp ?: fromEnv)?.takeIf { it.isNotBlank() } ?: fallback
+}
+
 android {
     namespace = "com.pierregasly.app"
     compileSdk = 35
@@ -15,13 +21,16 @@ android {
         versionName = "1.0"
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
 
-        // Supabase (set your values here)
+        // Supabase (set via gradle.properties or environment variables)
         // NOTE: Do NOT put your service/secret key in the Android app.
-        buildConfigField("String", "SUPABASE_URL", "\"https://YOUR_PROJECT_ID.supabase.co\"")
-        buildConfigField("String", "SUPABASE_ANON_KEY", "\"YOUR_SUPABASE_ANON_KEY\"")
-        buildConfigField("String", "SUPABASE_REST_URL", "\"https://YOUR_PROJECT_ID.supabase.co/rest/v1/\"")
-        buildConfigField("String", "SUPABASE_AUTH_URL", "\"https://YOUR_PROJECT_ID.supabase.co/auth/v1\"")
-}
+        val supabaseUrl = project.resolveSecret("SUPABASE_URL", "https://YOUR_PROJECT_ID.supabase.co")
+        val supabaseAnonKey = project.resolveSecret("SUPABASE_ANON_KEY", "YOUR_SUPABASE_ANON_KEY")
+
+        buildConfigField("String", "SUPABASE_URL", "\"$supabaseUrl\"")
+        buildConfigField("String", "SUPABASE_ANON_KEY", "\"$supabaseAnonKey\"")
+        buildConfigField("String", "SUPABASE_REST_URL", "\"${supabaseUrl.trimEnd('/')}/rest/v1/\"")
+        buildConfigField("String", "SUPABASE_AUTH_URL", "\"${supabaseUrl.trimEnd('/')}/auth/v1\"")
+    }
 
     signingConfigs {
         getByName("debug") {

@@ -16,8 +16,16 @@ import kotlinx.coroutines.withContext
  */
 class AuthRepository {
 
+    private fun configErrorOrNull(): Result.Error? {
+        return if (!SupabaseClient.isConfigured) {
+            Result.Error("Supabase is not configured. Set SUPABASE_URL and SUPABASE_ANON_KEY in gradle.properties.")
+        } else null
+    }
+
+
     suspend fun signUpRequestOtp(fullName: String, email: String, phone: String?, password: String): Result<String> =
         withContext(Dispatchers.IO) {
+            configErrorOrNull()?.let { return@withContext it }
             try {
                 val r = SupabaseClient.auth.signUp(
                     SupabaseSignUpRequest(
@@ -41,6 +49,7 @@ class AuthRepository {
         }
 
     suspend fun resendSignupOtp(email: String): Result<String> = withContext(Dispatchers.IO) {
+        configErrorOrNull()?.let { return@withContext it }
         try {
             val r = SupabaseClient.auth.resend(SupabaseResendRequest(type = "signup", email = email.trim()))
             if (r.isSuccessful) Result.Success("OTP resent. Please check your email.")
@@ -51,6 +60,7 @@ class AuthRepository {
     }
 
     suspend fun verifySignupOtp(email: String, otp: String): Result<SupabaseAuthResponse> = withContext(Dispatchers.IO) {
+        configErrorOrNull()?.let { return@withContext it }
         try {
             val r = SupabaseClient.auth.verifyOtp(
                 SupabaseVerifyOtpRequest(
@@ -67,6 +77,7 @@ class AuthRepository {
     }
 
     suspend fun login(email: String, password: String): Result<SupabaseAuthResponse> = withContext(Dispatchers.IO) {
+        configErrorOrNull()?.let { return@withContext it }
         try {
             val r = SupabaseClient.auth.signInWithPassword(body = SupabasePasswordGrantRequest(email.trim(), password))
             if (r.isSuccessful && r.body()?.accessToken != null) Result.Success(r.body()!!)
@@ -81,6 +92,7 @@ class AuthRepository {
      * To ensure Supabase sends a 6-digit OTP, your recovery email template should include {{ .Token }} (not {{ .ConfirmationURL }}).
      */
     suspend fun requestRecoveryOtp(email: String): Result<String> = withContext(Dispatchers.IO) {
+        configErrorOrNull()?.let { return@withContext it }
         try {
             val r = SupabaseClient.auth.recover(SupabaseRecoverRequest(email.trim()))
             if (r.isSuccessful) Result.Success("OTP sent. Please check your email.")
@@ -92,6 +104,7 @@ class AuthRepository {
 
     suspend fun verifyRecoveryOtpAndSetPassword(email: String, otp: String, newPassword: String): Result<String> =
         withContext(Dispatchers.IO) {
+            configErrorOrNull()?.let { return@withContext it }
             try {
                 val verify = SupabaseClient.auth.verifyOtp(
                     SupabaseVerifyOtpRequest(
@@ -128,6 +141,7 @@ class AuthRepository {
         role: String = "customer",
         phone: String = ""
     ): Result<Unit> = withContext(Dispatchers.IO) {
+        configErrorOrNull()?.let { return@withContext it }
         try {
             val payload = listOf(
                 UserRowUpsert(
