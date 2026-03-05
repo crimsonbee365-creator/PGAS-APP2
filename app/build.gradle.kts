@@ -23,13 +23,18 @@ android {
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
 
         // Supabase (set via gradle.properties or environment variables)
-        val resolvedSupabaseUrl = project.resolveSecret("SUPABASE_URL", "https://YOUR_PROJECT_ID.supabase.co").trimEnd('/')
-        val resolvedSupabaseAnonKey = project.resolveSecret("SUPABASE_ANON_KEY", "YOUR_SUPABASE_ANON_KEY")
+        val supabaseUrl = project.resolveSecret("SUPABASE_URL", "https://YOUR_PROJECT_ID.supabase.co")
+        val supabaseAnonKey = project.resolveSecret("SUPABASE_ANON_KEY", "YOUR_SUPABASE_ANON_KEY")
 
-        buildConfigField("String", "SUPABASE_URL", "\"$resolvedSupabaseUrl\"")
-        buildConfigField("String", "SUPABASE_ANON_KEY", "\"$resolvedSupabaseAnonKey\"")
-        buildConfigField("String", "SUPABASE_REST_URL", "\"$resolvedSupabaseUrl/rest/v1/\"")
-        buildConfigField("String", "SUPABASE_AUTH_URL", "\"$resolvedSupabaseUrl/auth/v1\"")
+        buildConfigField("String", "SUPABASE_URL", "\"${supabaseUrl.trimEnd('/')}\"")
+        // NOTE: Do NOT put your service/secret key in the Android app.
+        val supabaseUrl = project.resolveSecret("SUPABASE_URL", "https://YOUR_PROJECT_ID.supabase.co")
+        val supabaseAnonKey = project.resolveSecret("SUPABASE_ANON_KEY", "YOUR_SUPABASE_ANON_KEY")
+
+        buildConfigField("String", "SUPABASE_URL", "\"$supabaseUrl\"")
+        buildConfigField("String", "SUPABASE_ANON_KEY", "\"$supabaseAnonKey\"")
+        buildConfigField("String", "SUPABASE_REST_URL", "\"${supabaseUrl.trimEnd('/')}/rest/v1/\"")
+        buildConfigField("String", "SUPABASE_AUTH_URL", "\"${supabaseUrl.trimEnd('/')}/auth/v1\"")
     }
 
     signingConfigs {
