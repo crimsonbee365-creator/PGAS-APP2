@@ -29,7 +29,11 @@ class DashboardActivity : AppCompatActivity() {
 
         findViewById<View>(R.id.btnMenu).setOnClickListener { MenuHelper.show(it, this) }
 
-        findViewById<TextView>(R.id.tvEmail).text = session.getUserEmail() ?: "-"
-        findViewById<TextView>(R.id.tvStatus).text = "Email verified: true"
+        val email = session.getUserEmail().orEmpty()
+        val name = session.getUserName().orEmpty().ifBlank { email.substringBefore('@').replaceFirstChar { it.uppercase() } }
+
+        findViewById<TextView>(R.id.tvGreeting).text = "Welcome back, $name!"
+        findViewById<TextView>(R.id.tvEmail).text = if (email.isBlank()) "-" else email
+        findViewById<TextView>(R.id.tvStatus).text = if (email.isBlank()) "Profile incomplete" else "Email verified"
     }
 }

@@ -57,7 +57,7 @@
                     android:textColor="?android:textColorPrimary" android:layout_marginBottom="4dp"/>
 
                 <TextView android:id="@+id/tvSubtitle" android:layout_width="wrap_content"
-                    android:layout_height="wrap_content" android:text="Sign in to continue ordering"
+                    android:layout_height="wrap_content" android:text="Sign in to continue your LPG orders"
                     android:textSize="13sp" android:textColor="?android:textColorSecondary"
                     android:layout_marginBottom="28dp"/>
 
@@ -88,7 +88,7 @@
                 </com.google.android.material.textfield.TextInputLayout>
 
                 <TextView android:id="@+id/tvForgotPassword" android:layout_width="wrap_content"
-                    android:layout_height="wrap_content" android:text="Forgot password?"
+                    android:layout_height="wrap_content" android:text="Forgot password"
                     android:textColor="@color/pg_primary" android:textSize="13sp"
                     android:textStyle="bold" android:clickable="true" android:focusable="true"
                     android:layout_gravity="end" android:layout_marginTop="10dp" android:layout_marginBottom="6dp"/>
@@ -97,6 +97,7 @@
                     android:layout_height="wrap_content" android:textColor="@color/error"
                     android:textSize="13sp" android:gravity="center"
                     android:background="@color/error_soft" android:padding="12dp"
+                    android:maxLines="3" android:ellipsize="end"
                     android:visibility="gone" android:layout_marginBottom="4dp"/>
 
                 <Button android:id="@+id/btnLogin" android:layout_width="match_parent"

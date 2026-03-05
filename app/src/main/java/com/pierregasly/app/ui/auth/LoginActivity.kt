@@ -26,6 +26,16 @@ class LoginActivity : AppCompatActivity() {
     private val repo by lazy { AuthRepository() }
     private val session by lazy { SessionManager(this) }
 
+    private fun prettifyAuthError(message: String): String {
+        return when {
+            message.contains("invalid login credentials", ignoreCase = true) -> "Invalid email or password. Please try again."
+            message.contains("email not confirmed", ignoreCase = true) -> "Your email is not verified yet. Please verify the OTP first."
+            message.contains("network error", ignoreCase = true) -> "Network error. Check your internet connection and retry."
+            else -> message
+        }
+    }
+
+
     override fun onCreate(savedInstanceState: Bundle?) {
         ThemePrefs.applySavedTheme(this)
         super.onCreate(savedInstanceState)
@@ -141,7 +151,7 @@ class LoginActivity : AppCompatActivity() {
                         finish()
                     }
                     is Result.Error -> {
-                        val msg = res.message
+                        val msg = prettifyAuthError(res.message)
                         // If user is not confirmed yet, resend OTP then go to OTP screen.
                         if (msg.contains("not confirmed", ignoreCase = true) || msg.contains("confirm", ignoreCase = true)) {
                             val resend = repo.resendSignupOtp(email)

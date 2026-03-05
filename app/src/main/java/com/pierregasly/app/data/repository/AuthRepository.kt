@@ -4,6 +4,7 @@ import com.pierregasly.app.data.api.SupabaseClient
 import com.pierregasly.app.data.model.supabase.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
+import org.json.JSONObject
 
 /**
  * Phase 1 repository:
@@ -164,9 +165,22 @@ class AuthRepository {
 
     private fun parseError(raw: String?): String {
         if (raw.isNullOrBlank()) return "Request failed."
+
+        val parsed = runCatching {
+            val json = JSONObject(raw)
+            listOf("message", "msg", "error_description", "error")
+                .firstNotNullOfOrNull { key -> json.optString(key).takeIf { it.isNotBlank() } }
+        }.getOrNull()
+
         val m = Regex("\"message\"\\s*:\\s*\"([^\"]+)\"").find(raw)?.groupValues?.get(1)
+        val d = Regex("\"msg\"\\s*:\\s*\"([^\"]+)\"").find(raw)?.groupValues?.get(1)
         val e = Regex("\"error_description\"\\s*:\\s*\"([^\"]+)\"").find(raw)?.groupValues?.get(1)
-        val msg = m ?: e ?: raw
-        return msg.take(250)
+
+        val msg = (parsed ?: m ?: d ?: e ?: raw).trim()
+        return when {
+            msg.contains("invalid login credentials", ignoreCase = true) -> "Invalid email or password."
+            msg.contains("email not confirmed", ignoreCase = true) -> "Email not confirmed yet. Please verify OTP first."
+            else -> msg
+        }.take(250)
     }
 }

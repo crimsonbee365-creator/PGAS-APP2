@@ -1,116 +1,206 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.coordinatorlayout.widget.CoordinatorLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="?android:colorBackground">
 
-    <LinearLayout
+    <androidx.core.widget.NestedScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:orientation="vertical">
-
-        <FrameLayout
-            android:layout_width="match_parent"
-            android:layout_height="180dp">
-
-            <View
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:background="@drawable/bg_hero_gradient" />
-
-            <ImageButton
-                android:id="@+id/btnMenu"
-                android:layout_width="44dp"
-                android:layout_height="44dp"
-                android:layout_gravity="top|end"
-                android:layout_margin="16dp"
-                android:background="@android:color/transparent"
-                android:contentDescription="Menu"
-                app:srcCompat="@drawable/ic_hamburger" />
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:orientation="vertical"
-                android:gravity="center"
-                android:paddingTop="10dp">
-
-                <ImageView
-                    android:layout_width="72dp"
-                    android:layout_height="72dp"
-                    android:src="@drawable/logo_no_text"
-                    android:contentDescription="Logo" />
-
-                <TextView
-                    android:id="@+id/tvTitle"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Dashboard"
-                    android:textStyle="bold"
-                    android:textSize="20sp"
-                    android:textColor="@android:color/white"
-                    android:layout_marginTop="8dp"/>
-
-                <TextView
-                    android:id="@+id/tvSubtitle"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Welcome!"
-                    android:textSize="13sp"
-                    android:textColor="#DDFFFFFF"
-                    android:layout_marginTop="2dp"/>
-            </LinearLayout>
-        </FrameLayout>
+        android:fillViewport="true">
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:padding="18dp"
-            android:orientation="vertical">
+            android:orientation="vertical"
+            android:paddingBottom="20dp">
 
-            <com.google.android.material.card.MaterialCardView
+            <FrameLayout
+                android:layout_width="match_parent"
+                android:layout_height="210dp">
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:background="@drawable/bg_hero_gradient" />
+
+                <ImageButton
+                    android:id="@+id/btnMenu"
+                    android:layout_width="44dp"
+                    android:layout_height="44dp"
+                    android:layout_gravity="top|end"
+                    android:layout_margin="16dp"
+                    android:background="#22FFFFFF"
+                    android:contentDescription="Menu"
+                    android:padding="10dp"
+                    app:srcCompat="@drawable/ic_hamburger_dark" />
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:gravity="center"
+                    android:orientation="vertical"
+                    android:paddingTop="16dp">
+
+                    <ImageView
+                        android:layout_width="70dp"
+                        android:layout_height="70dp"
+                        android:contentDescription="Logo"
+                        android:src="@drawable/logo_no_text" />
+
+                    <TextView
+                        android:id="@+id/tvTitle"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="10dp"
+                        android:text="Pierre Gasly"
+                        android:textColor="@android:color/white"
+                        android:textSize="24sp"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:id="@+id/tvSubtitle"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Gas delivery dashboard"
+                        android:textColor="#E7E4FF"
+                        android:textSize="13sp" />
+                </LinearLayout>
+            </FrameLayout>
+
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                app:cardCornerRadius="18dp"
-                app:cardElevation="2dp"
-                android:layout_marginTop="10dp">
+                android:orientation="vertical"
+                android:paddingHorizontal="18dp">
+
+                <com.google.android.material.card.MaterialCardView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="-22dp"
+                    app:cardCornerRadius="18dp"
+                    app:cardElevation="4dp">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        android:padding="16dp">
+
+                        <TextView
+                            android:id="@+id/tvGreeting"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Welcome back!"
+                            android:textColor="?android:textColorPrimary"
+                            android:textSize="20sp"
+                            android:textStyle="bold" />
+
+                        <TextView
+                            android:id="@+id/tvEmail"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="6dp"
+                            android:text="-"
+                            android:textColor="?android:textColorSecondary"
+                            android:textSize="14sp" />
+
+                        <TextView
+                            android:id="@+id/tvStatus"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="8dp"
+                            android:background="@drawable/bg_status_pill"
+                            android:paddingHorizontal="10dp"
+                            android:paddingVertical="5dp"
+                            android:text="Email verified"
+                            android:textColor="@android:color/white"
+                            android:textSize="12sp"
+                            android:textStyle="bold" />
+                    </LinearLayout>
+                </com.google.android.material.card.MaterialCardView>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="20dp"
+                    android:text="Quick actions"
+                    android:textColor="?android:textColorPrimary"
+                    android:textSize="16sp"
+                    android:textStyle="bold" />
 
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:orientation="vertical"
-                    android:padding="16dp">
+                    android:layout_marginTop="10dp"
+                    android:orientation="horizontal"
+                    android:weightSum="2">
 
-                    <TextView
-                        android:layout_width="wrap_content"
+                    <com.google.android.material.card.MaterialCardView
+                        android:layout_width="0dp"
                         android:layout_height="wrap_content"
-                        android:text="Account"
-                        android:textStyle="bold"
-                        android:textSize="16sp"/>
+                        android:layout_marginEnd="8dp"
+                        android:layout_weight="1"
+                        app:cardCornerRadius="16dp"
+                        app:cardElevation="2dp">
 
-                    <TextView
-                        android:id="@+id/tvEmail"
-                        android:layout_width="wrap_content"
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="vertical"
+                            android:padding="14dp">
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="🛒 Order"
+                                android:textSize="16sp"
+                                android:textStyle="bold" />
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="4dp"
+                                android:text="Place your next LPG refill quickly"
+                                android:textColor="?android:textColorSecondary"
+                                android:textSize="12sp" />
+                        </LinearLayout>
+                    </com.google.android.material.card.MaterialCardView>
+
+                    <com.google.android.material.card.MaterialCardView
+                        android:layout_width="0dp"
                         android:layout_height="wrap_content"
-                        android:text="-"
-                        android:textSize="13sp"
-                        android:layout_marginTop="6dp"/>
+                        android:layout_marginStart="8dp"
+                        android:layout_weight="1"
+                        app:cardCornerRadius="16dp"
+                        app:cardElevation="2dp">
 
-                    <TextView
-                        android:id="@+id/tvStatus"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="Email verified: -"
-                        android:textSize="13sp"
-                        android:layout_marginTop="2dp"/>
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="vertical"
+                            android:padding="14dp">
 
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="📦 Track"
+                                android:textSize="16sp"
+                                android:textStyle="bold" />
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="4dp"
+                                android:text="Check current delivery updates"
+                                android:textColor="?android:textColorSecondary"
+                                android:textSize="12sp" />
+                        </LinearLayout>
+                    </com.google.android.material.card.MaterialCardView>
                 </LinearLayout>
-            </com.google.android.material.card.MaterialCardView>
-
+            </LinearLayout>
         </LinearLayout>
-
-    </LinearLayout>
+    </androidx.core.widget.NestedScrollView>
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>
