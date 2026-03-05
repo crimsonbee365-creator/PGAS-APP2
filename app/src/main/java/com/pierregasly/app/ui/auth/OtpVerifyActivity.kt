@@ -190,7 +190,7 @@ class OtpVerifyActivity : AppCompatActivity() {
                                     role = "customer"
                                 )
 
-                                val upsert = repo.upsertUserRow(
+                                repo.upsertUserRow(
                                     accessToken = res.data.accessToken ?: "",
                                     authUserId = userId,
                                     email = email,
@@ -198,11 +198,6 @@ class OtpVerifyActivity : AppCompatActivity() {
                                     role = "customer",
                                     phone = intent.getStringExtra(EXTRA_PHONE).orEmpty()
                                 )
-
-                                if (upsert is Result.Error) {
-                                    tvError.text = "Verified, but profile sync failed: ${upsert.message}"
-                                    tvError.visibility = View.VISIBLE
-                                }
 
                                 Toast.makeText(this@OtpVerifyActivity, "Email verified. Please login.", Toast.LENGTH_LONG).show()
                                 session.clearSession()

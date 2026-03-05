@@ -5,7 +5,6 @@ import com.pierregasly.app.data.model.supabase.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import org.json.JSONObject
-import java.util.Base64
 
 /**
  * Phase 1 repository:
@@ -144,11 +143,6 @@ class AuthRepository {
         phone: String = ""
     ): Result<Unit> = withContext(Dispatchers.IO) {
         configErrorOrNull()?.let { return@withContext it }
-        if (accessToken.isBlank()) return@withContext Result.Error("Missing access token.")
-
-        val resolvedAuthId = authUserId.ifBlank { extractUserIdFromJwt(accessToken).orEmpty() }
-        if (resolvedAuthId.isBlank()) return@withContext Result.Error("Missing auth user id.")
-
         try {
             val payload = listOf(
                 UserRowUpsert(
