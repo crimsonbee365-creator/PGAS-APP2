@@ -73,7 +73,7 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Create Account"
+                        android:text="CREATE ACCOUNT"
                         android:textColor="#FFFFFF"
                         android:textSize="26sp"
                         android:textStyle="bold"/>
@@ -379,6 +379,8 @@
                     android:textSize="13sp"
                     android:gravity="center"
                     android:background="@color/error_soft"
+                    android:maxLines="3"
+                    android:ellipsize="end"
                     android:padding="12dp"
                     android:visibility="gone"
                     android:layout_marginBottom="16dp"/>
@@ -388,7 +390,7 @@
                     android:id="@+id/btnSignUp"
                     android:layout_width="match_parent"
                     android:layout_height="56dp"
-                    android:text="Create Account"
+                    android:text="CREATE ACCOUNT"
                     android:textColor="@color/white"
                     android:textSize="16sp"
                     android:textStyle="bold"

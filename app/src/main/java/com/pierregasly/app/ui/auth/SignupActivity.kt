@@ -46,8 +46,6 @@ class SignupActivity : AppCompatActivity() {
         val etPassword = findViewById<TextInputEditText>(R.id.etPassword)
         val etConfirm = findViewById<TextInputEditText>(R.id.etConfirmPassword)
 
-        // Phone is no longer required
-        tilPhone.helperText = "(Optional)"
 
         val tvError = findViewById<TextView>(R.id.tvError)
         val btnSignUp = findViewById<Button>(R.id.btnSignUp)
