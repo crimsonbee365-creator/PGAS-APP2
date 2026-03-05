@@ -4,6 +4,8 @@ import com.pierregasly.app.data.api.SupabaseClient
 import com.pierregasly.app.data.model.supabase.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
+import org.json.JSONObject
+import java.util.Base64
 
 /**
  * Phase 1 repository:
@@ -16,8 +18,16 @@ import kotlinx.coroutines.withContext
  */
 class AuthRepository {
 
+    private fun configErrorOrNull(): Result.Error? {
+        return if (!SupabaseClient.isConfigured) {
+            Result.Error("Supabase is not configured. Add valid SUPABASE_URL and SUPABASE_ANON_KEY in gradle.properties, then Sync/Rebuild.")
+        } else null
+    }
+
+
     suspend fun signUpRequestOtp(fullName: String, email: String, phone: String?, password: String): Result<String> =
         withContext(Dispatchers.IO) {
+            configErrorOrNull()?.let { return@withContext it }
             try {
                 val r = SupabaseClient.auth.signUp(
                     SupabaseSignUpRequest(
@@ -41,6 +51,7 @@ class AuthRepository {
         }
 
     suspend fun resendSignupOtp(email: String): Result<String> = withContext(Dispatchers.IO) {
+        configErrorOrNull()?.let { return@withContext it }
         try {
             val r = SupabaseClient.auth.resend(SupabaseResendRequest(type = "signup", email = email.trim()))
             if (r.isSuccessful) Result.Success("OTP resent. Please check your email.")
@@ -51,6 +62,7 @@ class AuthRepository {
     }
 
     suspend fun verifySignupOtp(email: String, otp: String): Result<SupabaseAuthResponse> = withContext(Dispatchers.IO) {
+        configErrorOrNull()?.let { return@withContext it }
         try {
             val r = SupabaseClient.auth.verifyOtp(
                 SupabaseVerifyOtpRequest(
@@ -67,6 +79,7 @@ class AuthRepository {
     }
 
     suspend fun login(email: String, password: String): Result<SupabaseAuthResponse> = withContext(Dispatchers.IO) {
+        configErrorOrNull()?.let { return@withContext it }
         try {
             val r = SupabaseClient.auth.signInWithPassword(body = SupabasePasswordGrantRequest(email.trim(), password))
             if (r.isSuccessful && r.body()?.accessToken != null) Result.Success(r.body()!!)
@@ -81,6 +94,7 @@ class AuthRepository {
      * To ensure Supabase sends a 6-digit OTP, your recovery email template should include {{ .Token }} (not {{ .ConfirmationURL }}).
      */
     suspend fun requestRecoveryOtp(email: String): Result<String> = withContext(Dispatchers.IO) {
+        configErrorOrNull()?.let { return@withContext it }
         try {
             val r = SupabaseClient.auth.recover(SupabaseRecoverRequest(email.trim()))
             if (r.isSuccessful) Result.Success("OTP sent. Please check your email.")
@@ -92,6 +106,7 @@ class AuthRepository {
 
     suspend fun verifyRecoveryOtpAndSetPassword(email: String, otp: String, newPassword: String): Result<String> =
         withContext(Dispatchers.IO) {
+            configErrorOrNull()?.let { return@withContext it }
             try {
                 val verify = SupabaseClient.auth.verifyOtp(
                     SupabaseVerifyOtpRequest(
@@ -128,31 +143,67 @@ class AuthRepository {
         role: String = "customer",
         phone: String = ""
     ): Result<Unit> = withContext(Dispatchers.IO) {
+        configErrorOrNull()?.let { return@withContext it }
+        if (accessToken.isBlank()) return@withContext Result.Error("Missing access token.")
+
+        val resolvedAuthId = authUserId.ifBlank { extractUserIdFromJwt(accessToken).orEmpty() }
+        if (resolvedAuthId.isBlank()) return@withContext Result.Error("Missing auth user id.")
+
         try {
             val payload = listOf(
                 UserRowUpsert(
-                    authUserId = authUserId,
-                    name = fullName,
+                    authUserId = resolvedAuthId,
+                    name = fullName.ifBlank { email.substringBefore('@') },
                     email = email,
                     phone = phone,
                     role = role
                 )
             )
-            SupabaseClient.rest.upsertUser(
+            val response = SupabaseClient.rest.upsertUser(
                 bearer = "Bearer $accessToken",
                 body = payload
             )
-            Result.Success(Unit)
+
+            if (response.isSuccessful) {
+                Result.Success(Unit)
+            } else {
+                Result.Error(parseError(response.errorBody()?.string()))
+            }
         } catch (e: Exception) {
             Result.Error(e.message ?: "Failed to save user profile")
         }
     }
 
+
+    private fun extractUserIdFromJwt(token: String): String? {
+        return runCatching {
+            val parts = token.split('.')
+            if (parts.size < 2) null else {
+                val payloadBytes = Base64.getUrlDecoder().decode(parts[1])
+                val payload = String(payloadBytes)
+                JSONObject(payload).optString("sub").takeIf { it.isNotBlank() }
+            }
+        }.getOrNull()
+    }
+
     private fun parseError(raw: String?): String {
         if (raw.isNullOrBlank()) return "Request failed."
+
+        val parsed = runCatching {
+            val json = JSONObject(raw)
+            listOf("message", "msg", "error_description", "error")
+                .firstNotNullOfOrNull { key -> json.optString(key).takeIf { it.isNotBlank() } }
+        }.getOrNull()
+
         val m = Regex("\"message\"\\s*:\\s*\"([^\"]+)\"").find(raw)?.groupValues?.get(1)
+        val d = Regex("\"msg\"\\s*:\\s*\"([^\"]+)\"").find(raw)?.groupValues?.get(1)
         val e = Regex("\"error_description\"\\s*:\\s*\"([^\"]+)\"").find(raw)?.groupValues?.get(1)
-        val msg = m ?: e ?: raw
-        return msg.take(250)
+
+        val msg = (parsed ?: m ?: d ?: e ?: raw).trim()
+        return when {
+            msg.contains("invalid login credentials", ignoreCase = true) -> "Invalid email or password."
+            msg.contains("email not confirmed", ignoreCase = true) -> "Email not confirmed yet. Please verify OTP first."
+            else -> msg
+        }.take(250)
     }
 }

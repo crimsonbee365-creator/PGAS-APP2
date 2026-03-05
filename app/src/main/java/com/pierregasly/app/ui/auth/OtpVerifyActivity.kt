@@ -4,7 +4,9 @@ import android.content.Intent
 import android.os.Bundle
 import android.os.CountDownTimer
 import android.text.Editable
+import android.text.InputFilter
 import android.text.TextWatcher
+import android.view.KeyEvent
 import android.view.View
 import android.widget.EditText
 import android.widget.ProgressBar
@@ -31,7 +33,6 @@ class OtpVerifyActivity : AppCompatActivity() {
         const val MODE_SIGNUP = "signup"
         const val MODE_RECOVERY = "recovery"
 
-        // signup extra fields for user row
         const val EXTRA_FIRST = "first"
         const val EXTRA_LAST = "last"
         const val EXTRA_MI = "mi"
@@ -49,18 +50,12 @@ class OtpVerifyActivity : AppCompatActivity() {
         val mode = intent.getStringExtra(EXTRA_MODE) ?: MODE_SIGNUP
         val email = intent.getStringExtra(EXTRA_EMAIL).orEmpty()
 
-        // XML uses tvPhoneNumber
+        findViewById<View>(R.id.btnBack).setOnClickListener { finish() }
         findViewById<TextView>(R.id.tvPhoneNumber).text = email
-        findViewById<TextView>(R.id.tvTitle).text = if (mode == MODE_RECOVERY) "Verify OTP" else "Verify your email"
-        // Supabase confirmation emails show a 6-digit code when using {{ .Token }} in templates.
-        findViewById<TextView>(R.id.tvOtpDescription).text = if (mode == MODE_RECOVERY) {
-            "Enter the code sent to your Gmail"
-        } else {
-            "Enter the code sent to"
-        }
+        findViewById<TextView>(R.id.tvTitle).text = if (mode == MODE_RECOVERY) "Reset your password" else "Verify your email"
+        findViewById<TextView>(R.id.tvOtpDescription).text = "Enter the 6-digit code sent to"
 
-        // XML uses otp1..otp6
-        val etOtp = listOf(
+        val otpBoxes = listOf(
             findViewById<EditText>(R.id.otp1),
             findViewById<EditText>(R.id.otp2),
             findViewById<EditText>(R.id.otp3),
@@ -68,19 +63,7 @@ class OtpVerifyActivity : AppCompatActivity() {
             findViewById<EditText>(R.id.otp5),
             findViewById<EditText>(R.id.otp6)
         )
-
-        // auto-advance
-        etOtp.forEachIndexed { idx, editText ->
-            editText.addTextChangedListener(object : TextWatcher {
-                override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
-                override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
-                override fun afterTextChanged(s: Editable?) {
-                    if (s?.length == 1 && idx < etOtp.lastIndex) {
-                        etOtp[idx + 1].requestFocus()
-                    }
-                }
-            })
-        }
+        setupOtpInputs(otpBoxes)
 
         val tilNewPass = findViewById<TextInputLayout>(R.id.tilNewPassword)
         val tilConfirm = findViewById<TextInputLayout>(R.id.tilConfirmNewPassword)
@@ -97,7 +80,7 @@ class OtpVerifyActivity : AppCompatActivity() {
         val progress = findViewById<ProgressBar>(R.id.otpProgress)
         val tvResend = findViewById<TextView>(R.id.tvResend)
 
-        fun otpValue(): String = etOtp.joinToString(separator = "") { it.text?.toString().orEmpty() }
+        fun otpValue(): String = otpBoxes.joinToString("") { it.text?.toString().orEmpty() }
 
         fun setLoading(on: Boolean) {
             progress.visibility = if (on) View.VISIBLE else View.GONE
@@ -129,13 +112,13 @@ class OtpVerifyActivity : AppCompatActivity() {
             return ok
         }
 
-        // Resend timer
         tvResend.isEnabled = false
         object : CountDownTimer(60_000, 1_000) {
             override fun onTick(millisUntilFinished: Long) {
                 val sec = (millisUntilFinished / 1000).toInt()
                 tvResend.text = "Resend OTP in ${sec}s"
             }
+
             override fun onFinish() {
                 tvResend.text = "Resend OTP"
                 tvResend.isEnabled = true
@@ -145,11 +128,11 @@ class OtpVerifyActivity : AppCompatActivity() {
         tvResend.setOnClickListener {
             lifecycleScope.launch {
                 setLoading(true)
-                when (mode) {
-                    MODE_RECOVERY -> repo.requestRecoveryOtp(email)
-                    else -> repo.resendSignupOtp(email)
+                when (val resend = if (mode == MODE_RECOVERY) repo.requestRecoveryOtp(email) else repo.resendSignupOtp(email)) {
+                    is Result.Success -> Toast.makeText(this@OtpVerifyActivity, resend.data, Toast.LENGTH_SHORT).show()
+                    is Result.Error -> Toast.makeText(this@OtpVerifyActivity, resend.message, Toast.LENGTH_LONG).show()
+                    Result.Loading -> Unit
                 }
-                Toast.makeText(this@OtpVerifyActivity, "OTP resent", Toast.LENGTH_SHORT).show()
                 setLoading(false)
             }
         }
@@ -159,14 +142,12 @@ class OtpVerifyActivity : AppCompatActivity() {
 
             val otp = otpValue()
             if (otp.length != 6) {
-                tvError.text = "Enter the 6-digit code"
+                tvError.text = "Enter the complete 6-digit code"
                 tvError.visibility = View.VISIBLE
                 return@setOnClickListener
             }
 
-            if (mode == MODE_RECOVERY && !validateRecoveryPassword()) {
-                return@setOnClickListener
-            }
+            if (mode == MODE_RECOVERY && !validateRecoveryPassword()) return@setOnClickListener
 
             lifecycleScope.launch {
                 setLoading(true)
@@ -177,27 +158,26 @@ class OtpVerifyActivity : AppCompatActivity() {
                         when (val res = repo.verifyRecoveryOtpAndSetPassword(email, otp, newPass)) {
                             is Result.Success -> {
                                 Toast.makeText(this@OtpVerifyActivity, "Password updated. Please login.", Toast.LENGTH_LONG).show()
-                                val i = Intent(this@OtpVerifyActivity, LoginActivity::class.java)
-                                i.putExtra("prefill_email", email)
-                                startActivity(i)
+                                startActivity(Intent(this@OtpVerifyActivity, LoginActivity::class.java).putExtra("prefill_email", email))
                                 finish()
                             }
+
                             is Result.Error -> {
                                 tvError.text = res.message
                                 tvError.visibility = View.VISIBLE
                             }
+
                             Result.Loading -> Unit
                         }
                     }
+
                     else -> {
                         when (val res = repo.verifySignupOtp(email, otp)) {
                             is Result.Success -> {
-                                // Create user row in public.users if needed
                                 val first = intent.getStringExtra(EXTRA_FIRST).orEmpty()
                                 val last = intent.getStringExtra(EXTRA_LAST).orEmpty()
                                 val fullName = listOf(first, last).filter { it.isNotBlank() }.joinToString(" ")
 
-                                // Save session so dashboard can load, but per your requirement we return to Login after verification.
                                 val session = SessionManager(this@OtpVerifyActivity)
                                 val userId = res.data.user?.id ?: ""
                                 val userName = if (fullName.isBlank()) email.substringBefore('@') else fullName
@@ -210,33 +190,78 @@ class OtpVerifyActivity : AppCompatActivity() {
                                     role = "customer"
                                 )
 
-                                // Upsert user row best-effort
-                                repo.upsertUserRow(
+                                val upsert = repo.upsertUserRow(
                                     accessToken = res.data.accessToken ?: "",
                                     authUserId = userId,
                                     email = email,
                                     fullName = userName,
-                                    role = "customer"
+                                    role = "customer",
+                                    phone = intent.getStringExtra(EXTRA_PHONE).orEmpty()
                                 )
 
-                                // Return to Login
+                                if (upsert is Result.Error) {
+                                    tvError.text = "Verified, but profile sync failed: ${upsert.message}"
+                                    tvError.visibility = View.VISIBLE
+                                }
+
                                 Toast.makeText(this@OtpVerifyActivity, "Email verified. Please login.", Toast.LENGTH_LONG).show()
-                                session.clearSession() // Force login flow
-                                val i = Intent(this@OtpVerifyActivity, LoginActivity::class.java)
-                                i.putExtra("prefill_email", email)
-                                startActivity(i)
+                                session.clearSession()
+                                startActivity(Intent(this@OtpVerifyActivity, LoginActivity::class.java).putExtra("prefill_email", email))
                                 finish()
                             }
+
                             is Result.Error -> {
                                 tvError.text = res.message
                                 tvError.visibility = View.VISIBLE
                             }
+
                             Result.Loading -> Unit
                         }
                     }
                 }
 
                 setLoading(false)
+            }
+        }
+    }
+
+    private fun setupOtpInputs(otpBoxes: List<EditText>) {
+        otpBoxes.forEachIndexed { index, editText ->
+            editText.filters = arrayOf(InputFilter.LengthFilter(6))
+
+            editText.addTextChangedListener(object : TextWatcher {
+                override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) = Unit
+                override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) = Unit
+
+                override fun afterTextChanged(s: Editable?) {
+                    val value = s?.toString().orEmpty()
+
+                    if (value.length > 1) {
+                        val digits = value.filter { it.isDigit() }.take(6)
+                        digits.forEachIndexed { offset, c ->
+                            if (index + offset <= otpBoxes.lastIndex) {
+                                otpBoxes[index + offset].setText(c.toString())
+                            }
+                        }
+                        otpBoxes[minOf(index + digits.length, otpBoxes.lastIndex)].requestFocus()
+                        return
+                    }
+
+                    if (value.length == 1 && index < otpBoxes.lastIndex) {
+                        otpBoxes[index + 1].requestFocus()
+                    }
+                }
+            })
+
+            editText.setOnKeyListener { _, keyCode, event ->
+                if (keyCode == KeyEvent.KEYCODE_DEL && event.action == KeyEvent.ACTION_DOWN) {
+                    if (editText.text.isNullOrEmpty() && index > 0) {
+                        otpBoxes[index - 1].requestFocus()
+                        otpBoxes[index - 1].text?.clear()
+                        return@setOnKeyListener true
+                    }
+                }
+                false
             }
         }
     }
