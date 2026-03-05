@@ -146,21 +146,38 @@ class AuthRepository {
         try {
             val payload = listOf(
                 UserRowUpsert(
-                    authUserId = authUserId,
-                    name = fullName,
+                    authUserId = resolvedAuthId,
+                    name = fullName.ifBlank { email.substringBefore('@') },
                     email = email,
                     phone = phone,
                     role = role
                 )
             )
-            SupabaseClient.rest.upsertUser(
+            val response = SupabaseClient.rest.upsertUser(
                 bearer = "Bearer $accessToken",
                 body = payload
             )
-            Result.Success(Unit)
+
+            if (response.isSuccessful) {
+                Result.Success(Unit)
+            } else {
+                Result.Error(parseError(response.errorBody()?.string()))
+            }
         } catch (e: Exception) {
             Result.Error(e.message ?: "Failed to save user profile")
         }
+    }
+
+
+    private fun extractUserIdFromJwt(token: String): String? {
+        return runCatching {
+            val parts = token.split('.')
+            if (parts.size < 2) null else {
+                val payloadBytes = Base64.getUrlDecoder().decode(parts[1])
+                val payload = String(payloadBytes)
+                JSONObject(payload).optString("sub").takeIf { it.isNotBlank() }
+            }
+        }.getOrNull()
     }
 
     private fun parseError(raw: String?): String {

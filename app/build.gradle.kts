@@ -26,10 +26,6 @@ android {
         val supabaseUrl = project.resolveSecret("SUPABASE_URL", "https://YOUR_PROJECT_ID.supabase.co")
         val supabaseAnonKey = project.resolveSecret("SUPABASE_ANON_KEY", "YOUR_SUPABASE_ANON_KEY")
 
-        buildConfigField("String", "SUPABASE_URL", "\"${supabaseUrl.trimEnd('/')}\"")
-        // NOTE: Do NOT put your service/secret key in the Android app.
-        val supabaseUrl = project.resolveSecret("SUPABASE_URL", "https://YOUR_PROJECT_ID.supabase.co")
-        val supabaseAnonKey = project.resolveSecret("SUPABASE_ANON_KEY", "YOUR_SUPABASE_ANON_KEY")
 
         buildConfigField("String", "SUPABASE_URL", "\"$supabaseUrl\"")
         buildConfigField("String", "SUPABASE_ANON_KEY", "\"$supabaseAnonKey\"")

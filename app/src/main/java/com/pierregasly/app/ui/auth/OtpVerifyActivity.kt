@@ -195,7 +195,8 @@ class OtpVerifyActivity : AppCompatActivity() {
                                     authUserId = userId,
                                     email = email,
                                     fullName = userName,
-                                    role = "customer"
+                                    role = "customer",
+                                    phone = intent.getStringExtra(EXTRA_PHONE).orEmpty()
                                 )
 
                                 Toast.makeText(this@OtpVerifyActivity, "Email verified. Please login.", Toast.LENGTH_LONG).show()

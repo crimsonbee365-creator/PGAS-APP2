@@ -139,14 +139,29 @@ class LoginActivity : AppCompatActivity() {
                         // Cache session locally for Phase 1
                         val userId = res.data.user?.id ?: ""
                         val userEmail = res.data.user?.email ?: email
+                        val displayName = email.substringBefore('@')
                         session.saveSession(
                             accessToken = res.data.accessToken ?: "",
                             authUserId = userId,
-                            name = email.substringBefore('@'),
+                            name = displayName,
                             email = userEmail,
                             phone = null,
                             role = "customer"
                         )
+
+                        // Ensure user row exists in public.users even for existing accounts.
+                        val upsert = repo.upsertUserRow(
+                            accessToken = res.data.accessToken ?: "",
+                            authUserId = userId,
+                            email = userEmail,
+                            fullName = displayName,
+                            role = "customer"
+                        )
+                        if (upsert is Result.Error) {
+                            tvError.text = upsert.message
+                            tvError.visibility = View.VISIBLE
+                        }
+
                         startActivity(Intent(this@LoginActivity, DashboardActivity::class.java))
                         finish()
                     }
